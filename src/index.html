@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keyboard Cooper</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font: 16px system-ui, sans-serif; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  .hud { position: fixed; top: 12px; left: 12px; right: 12px; display: flex; gap: 24px; flex-wrap: wrap; font-variant-numeric: tabular-nums; pointer-events: none; }
+  .hud b { display: block; font-size: 28px; }
+  .hud span { font-size: 12px; opacity: .7; text-transform: uppercase; }
+  .panel { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: rgba(0,0,0,.6); text-align: center; }
+  .panel h1 { margin: 0; }
+  .panel button { font: inherit; padding: 8px 16px; margin: 4px; border: 2px solid #888; background: #222; color: #eee; border-radius: 6px; cursor: pointer; }
+  .panel button.sel { border-color: #4c8; }
+  .big { font-size: 120px; font-weight: bold; }
+  table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  td { padding: 4px 12px; text-align: left; } td + td { text-align: right; }
+  .primary td { font-size: 32px; font-weight: bold; }
+  #debug { position: fixed; bottom: 12px; left: 12px; margin: 0; padding: 8px; background: rgba(0,0,0,.7); font: 12px monospace; pointer-events: none; }
+  [hidden] { display: none !important; }
+  .panel input { font: inherit; padding: 8px; border: 2px solid #888; background: #222; color: #eee; border-radius: 6px; }
+  #top { max-height: 40vh; overflow-y: auto; min-width: 280px; }
+  #top td:first-child { opacity: .6; }
+  .msg { min-height: 1.2em; opacity: .8; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="hud" id="hud" hidden>
+  <div><span>Remaining</span><b id="h-rem"></b></div>
+  <div><span>Elapsed</span><b id="h-el"></b></div>
+  <div><span>Distance</span><b id="h-dist"></b></div>
+  <div><span>Speed</span><b id="h-spd"></b></div>
+  <div><span>Presses/s</span><b id="h-rate"></b></div>
+</div>
+
+<div class="panel" id="menu">
+  <h1>Keyboard Cooper</h1>
+  <p>Alternate <b id="m-keys"></b> as fast as you can. Same key twice doesn't count.</p>
+  <div id="durations"></div>
+  <p><button id="start">Start (Enter)</button></p>
+  <h3 style="margin:0">Top list: <span id="top-title"></span></h3>
+  <div id="top"><table id="top-table"></table></div>
+  <div class="msg" id="top-msg"></div>
+  <p style="opacity:.6;font-size:13px">` toggles debug info</p>
+</div>
+
+<div class="panel" id="countdown" hidden><div class="big" id="cd"></div></div>
+
+<div class="panel" id="results" hidden>
+  <h1>Finished</h1>
+  <table id="r-table"></table>
+  <form id="submit-form"><input id="name" maxlength="20" placeholder="Your name" autocomplete="nickname" required> <button>Submit to top list</button></form>
+  <div class="msg" id="submit-msg"></div>
+  <p><button id="restart">Run again (Enter)</button> <button id="to-menu">Menu (Esc)</button></p>
+</div>
+
+<pre id="debug" hidden></pre>
+
+<script src="logic.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "keyboard-cooper-api",
+  "private": true,
+  "main": "scores.js",
+  "dependencies": {
+    "@azure/data-tables": "^13.3.0",
+    "@azure/functions": "^4.6.0"
+  }
+}
