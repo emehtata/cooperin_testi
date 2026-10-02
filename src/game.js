@@ -7,6 +7,7 @@ const ui = {
   rem: $('h-rem'), el: $('h-el'), dist: $('h-dist'), spd: $('h-spd'), rate: $('h-rate'),
 };
 
+const RESULTS_LOCK_MS = 1500;
 const input = createInput(CONFIG.keys);
 const meter = createRateMeter(CONFIG.rateWindowSeconds, CONFIG.rateBufferSize);
 const phys = { speed: 0, distance: 0, maxSpeed: 0 };
@@ -58,7 +59,12 @@ function setState(s) {
   }
   if (s === 'MENU') markDuration();
   if (s === 'COUNTDOWN') ui.cd.textContent = CONFIG.countdownSeconds;
-  if (s === 'FINISHED') showResults();
+  if (s === 'FINISHED') {
+    showResults();
+    // Taps still in flight from running would land on "Run again" (it overlaps the touch buttons on phones).
+    ui.results.inert = true;
+    setTimeout(() => { ui.results.inert = false; }, RESULTS_LOCK_MS);
+  }
   document.activeElement?.blur(); // keep Enter/Space from re-clicking buttons
   updateHud();
 }
