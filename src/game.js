@@ -50,7 +50,7 @@ function setState(s) {
   ui.menu.hidden = s !== 'MENU';
   ui.countdown.hidden = s !== 'COUNTDOWN';
   ui.results.hidden = s !== 'FINISHED';
-  ui.hud.hidden = s !== 'RUNNING' && s !== 'COUNTDOWN';
+  ui.hud.hidden = $('touch').hidden = s !== 'RUNNING' && s !== 'COUNTDOWN';
   if (s === 'COUNTDOWN' || s === 'MENU') {
     input.resetStats(); meter.reset();
     phys.speed = phys.distance = phys.maxSpeed = 0;
@@ -116,20 +116,26 @@ $('submit-form').onsubmit = async e => {
 };
 
 // ---------- input ----------
+// Shared by keyboard and touch buttons.
+function press(code, repeat) {
+  // Held-state is tracked in every state so a key held through "GO!" can't count as a fresh press.
+  const valid = input.down(code, repeat);
+  if (state !== 'RUNNING') { if (state !== 'FINISHED') input.resetStats(); return; }
+  if (valid) {
+    const now = performance.now();
+    meter.add(now / 1000);
+    if (pressCount < pressTimes.length) pressTimes[pressCount++] = (now - stateStart) / 1000;
+  }
+}
+for (const [id, code] of [['t-left', CONFIG.keys.left], ['t-right', CONFIG.keys.right]]) {
+  const b = $(id);
+  b.addEventListener('pointerdown', e => { e.preventDefault(); b.setPointerCapture(e.pointerId); press(code, false); });
+  for (const ev of ['pointerup', 'pointercancel']) b.addEventListener(ev, () => input.up(code));
+  b.addEventListener('contextmenu', e => e.preventDefault()); // long-press menu
+}
 addEventListener('keydown', e => {
   if (e.target.tagName === 'INPUT') return; // typing a name, not playing
-  if (input.isGameKey(e.code)) {
-    e.preventDefault();
-    // Held-state is tracked in every state so a key held through "GO!" can't count as a fresh press.
-    const valid = input.down(e.code, e.repeat);
-    if (state !== 'RUNNING') { if (state !== 'FINISHED') input.resetStats(); return; }
-    if (valid) {
-      const now = performance.now();
-      meter.add(now / 1000);
-      if (pressCount < pressTimes.length) pressTimes[pressCount++] = (now - stateStart) / 1000;
-    }
-    return;
-  }
+  if (input.isGameKey(e.code)) { e.preventDefault(); press(e.code, e.repeat); return; }
   if (e.code === 'Backquote') { debug = !debug; ui.debug.hidden = !debug; return; }
   if (e.code === 'Space') e.preventDefault();
   if (e.code === 'Enter' && (state === 'MENU' || state === 'FINISHED')) { e.preventDefault(); setState('COUNTDOWN'); }

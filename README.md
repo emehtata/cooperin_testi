@@ -16,7 +16,7 @@ Open `src/index.html` in a desktop browser. No build step, no server and no inte
 ## Play
 
 - Choose a duration on the menu (10 s, 30 s, 1, 2, 5 or 12 min; 10 s is the default), then press **Enter** or click Start.
-- Alternate **A** and **D**. Pressing the same key twice in a row, holding a key down, and keyboard auto-repeat don't count.
+- Alternate **A** and **D**, or on a phone or tablet, tap the large **L** and **R** buttons. Pressing the same key twice in a row, holding a key down, and keyboard auto-repeat don't count.
 - **Esc** returns to the menu, and **Enter** on the results screen runs the test again.
 
 To change the durations, edit `CONFIG.durations` in `src/logic.js`. To change the keys, edit `CONFIG.keys` (these are `KeyboardEvent.code` values).
