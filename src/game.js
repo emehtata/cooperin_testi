@@ -121,10 +121,11 @@ function press(code, repeat) {
   // Held-state is tracked in every state so a key held through "GO!" can't count as a fresh press.
   const valid = input.down(code, repeat);
   if (state !== 'RUNNING') { if (state !== 'FINISHED') input.resetStats(); return; }
-  if (valid) {
-    const now = performance.now();
+  const now = performance.now(), t = (now - stateStart) / 1000;
+  // The timer can expire before the next frame switches to FINISHED (slow frames on phones).
+  if (valid && t <= duration) {
     meter.add(now / 1000);
-    if (pressCount < pressTimes.length) pressTimes[pressCount++] = (now - stateStart) / 1000;
+    if (pressCount < pressTimes.length) pressTimes[pressCount++] = t;
   }
 }
 for (const [id, code] of [['t-left', CONFIG.keys.left], ['t-right', CONFIG.keys.right]]) {
