@@ -17,7 +17,6 @@ const CONFIG = {
   // Server-side plausibility checks for submitted runs (see validateRun).
   validation: {
     maxRate: 20,          // presses/sec sustained over any 1 s window; above this isn't human
-    minInterval: 0.035,   // seconds between two presses
     minPressesForCv: 40,  // only check regularity on runs with enough presses
     minIntervalCv: 0.03,  // interval std/mean below this = machine-perfect timing (bot)
     nameMaxLength: 20,
@@ -139,7 +138,7 @@ function validateRun(run, cfg = CONFIG) {
     if (typeof t !== 'number' || !(t >= 0 && t <= duration)) return 'bad press time';
     if (i === 0) continue;
     const d = t - presses[i - 1];
-    if (d < v.minInterval) return 'presses too fast';
+    if (d < 0) return 'presses out of order'; // tiny gaps are normal: fingers roll from one key to the other
     sum += d; sumSq += d * d;
     const w = Math.ceil(v.maxRate) + 1; // more than maxRate presses inside 1 s
     if (i >= w && t - presses[i - w] < 1) return 'rate too high';

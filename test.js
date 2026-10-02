@@ -84,9 +84,14 @@ assert.strictEqual(bad({ name: 'Säde_2' }), null);
 assert.match(bad({ presses: 'x' }), /presses/);
 assert.match(bad({ presses: [1, 'a'] }), /press time/);
 assert.match(bad({ presses: [1, 31] }), /press time/);
-assert.match(bad({ presses: [2, 1] }), /too fast/);         // unsorted
+assert.match(bad({ presses: [2, 1] }), /order/);
 assert.match(bad({ presses: Array.from({ length: 200 }, (_, i) => i * 0.04) }), /rate too high/); // 25/s
 assert.match(bad({ presses: Array.from({ length: 200 }, (_, i) => i * 0.1) }), /regular/);         // bot
 assert.match(validateRun(null), /body/);
 
 console.log('server checks passed');
+
+// Real fast play: pairs of near-simultaneous presses (finger roll, 5–30 ms apart) at ~12/s must pass
+const rolls = []; for (let t = 0.5; t < 29; t += 0.167) rolls.push(+t.toFixed(3), +(t + 0.005 + 0.025 * rnd()).toFixed(3));
+assert.strictEqual(bad({ presses: rolls }), null);
+console.log('roll check passed');
