@@ -54,7 +54,7 @@ Press **`** (backquote) during play, or open `src/index.html?debug=1`, to see FP
 Each test duration has its own world top 100.
 
 - **Submitting:** the client sends the times of the valid key presses, not a distance.
-- **Checking:** the server runs `validateRun` (rate limits, minimum gap between presses, rejecting suspiciously regular timing, name format), replays the presses through the same model and stores the distance it calculates.
+- **Checking:** the server runs `validateRun` (rate limits, presses in time order, rejecting suspiciously regular timing, name format), replays the presses through the same model and stores the distance it calculates.
 - **Storage:** Azure Table Storage, table `scores`, using the `SCORES_CONNECTION` app setting. Rows are partitioned by `v<rulesVersion>-<duration>`, and the row key is the inverted distance, so the first rows of a partition are already the top list.
 - **Rules changes:** after changing balancing values, increase `CONFIG.rulesVersion`. That starts fresh lists, and old clients are told to reload.
 - **Abuse limits:** 5 submissions per minute per IP, counted in memory only. IP addresses are never stored.
